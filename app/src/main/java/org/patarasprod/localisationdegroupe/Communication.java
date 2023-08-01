@@ -212,16 +212,18 @@ public class Communication {
         /** Met à jour le voyant indicateur de connexion au serveur (présent sur la page
          * paramètres) en fonction de l'état de la variable cfg.communicationEnCours
          */
-        if (cfg.communicationEnCours) {
-            cfg.indicateurConnexionServeur.setImageDrawable(
-                    cfg.contexte.getResources().getDrawable(R.drawable.serveur_actif));
-        } else {
-            cfg.indicateurConnexionServeur.setImageDrawable(
-                    cfg.contexte.getResources().getDrawable(R.drawable.serveur_injoignable));
-        }
-        if (cfg.fragment_3 != null) {
-            cfg.fragment_3.getView().invalidate();
-            cfg.fragment_3.getView().requestLayout();
+        if (cfg.indicateurConnexionServeur != null) {
+            if (cfg.communicationEnCours) {
+                cfg.indicateurConnexionServeur.setImageDrawable(
+                        cfg.mainActivity.getBaseContext().getResources().getDrawable(R.drawable.serveur_actif));
+            } else {
+                cfg.indicateurConnexionServeur.setImageDrawable(
+                        cfg.mainActivity.getBaseContext().getResources().getDrawable(R.drawable.serveur_injoignable));
+            }
+            if (cfg.fragment_3 != null) {
+                cfg.fragment_3.getView().invalidate();
+                cfg.fragment_3.getView().requestLayout();
+            }
         }
     }
 }

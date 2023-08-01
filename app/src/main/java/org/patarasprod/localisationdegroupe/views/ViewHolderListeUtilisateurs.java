@@ -2,7 +2,6 @@ package org.patarasprod.localisationdegroupe.views;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
@@ -63,7 +62,8 @@ public class ViewHolderListeUtilisateurs extends RecyclerView.ViewHolder {
         this.position = position;
         this.textViewNom.setText(position.nom);
         this.textViewPosition.setText(position.latitude + "N, " + position.longitude + "E");
-        this.textViewAnciennete.setText(position.dateMesure.toString());
+        this.textViewAnciennete.setText(position.getAnciennete());
+        this.textViewAnciennete.setTextColor(position.couleurAnciennete());
         //if (numero % 2 == 1) this.itemView.setBackgroundColor(Color.DKGRAY);
     }
 

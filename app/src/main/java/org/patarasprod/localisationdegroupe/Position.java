@@ -1,18 +1,17 @@
 package org.patarasprod.localisationdegroupe;
 
+import static java.time.temporal.ChronoUnit.SECONDS;
+
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.Marker;
 
-import java.io.IOException;
 import java.time.Instant;
-import java.util.Iterator;
 
 public class Position {
     /** Classe représentant la position dans l'espace et le temps d'un utilisateur **/
@@ -181,6 +180,57 @@ public class Position {
 
     public GeoPoint getGeoPoint() {
         return new GeoPoint(this.latitude, this.longitude);
+    }
+
+
+    public String getAnciennete() {
+        /** Renvoi une chaîne représentant l'ancienneté de la position en nombre d'années, mois,
+         * jours, heures, minutes secondes
+          */
+        final long NB_SECONDES_DS_1_AN = (long) (365.25 * 24 * 3600);
+        final long NB_SECONDES_DS_1_MOIS = (long) (30.5 * 24 * 3600);
+        final long NB_SECONDES_DS_1_JOUR = 24 * 3600;
+        // Détermination du nb de secondes depuis la mesure
+        long nbSecondes = SECONDS.between(this.dateMesure, Instant.now());
+        // Calcul du nb d'années/mois/jours/h/m/s
+        long nbAnnees = nbSecondes / NB_SECONDES_DS_1_AN;
+        nbSecondes = nbSecondes % NB_SECONDES_DS_1_AN;
+        long nbMois = nbSecondes / NB_SECONDES_DS_1_MOIS;
+        nbSecondes = nbSecondes % NB_SECONDES_DS_1_MOIS;
+        long nbJours = nbSecondes / NB_SECONDES_DS_1_JOUR;
+        nbSecondes = nbSecondes % NB_SECONDES_DS_1_JOUR;
+        long nbHeures = nbSecondes / 3600;
+        nbSecondes = nbSecondes % 3600;
+        long nbMinutes = nbSecondes / 60;
+        nbSecondes = nbSecondes % 60;
+        // Création de la chaîne à afficher
+        if (nbSecondes <= 3) return "A l'instant";
+        String chaine = "Il y a";
+        final long[] VALEURS_REMPLISSAGE = {nbAnnees, nbMois, nbJours, nbHeures, nbMinutes, nbSecondes};
+        final String[] TEXTE_REMPLISSAGE = {" an", " mois", " j", " h", " m", " s"};
+        for (int i = 0 ; i < VALEURS_REMPLISSAGE.length ; i++) {
+            if (VALEURS_REMPLISSAGE[i] > 0) {
+                if (TEXTE_REMPLISSAGE[i].equals("an") && VALEURS_REMPLISSAGE[i] > 1) {
+                    chaine += VALEURS_REMPLISSAGE[i] + " ans";
+                } else {
+                    if (chaine.length() != 0) chaine += " ";
+                    chaine += VALEURS_REMPLISSAGE[i] + TEXTE_REMPLISSAGE[i];
+                }
+            }
+        }
+        return chaine;
+    }
+
+    public int couleurAnciennete() {
+        /** Renvoi la couleur correspondant à l'ancienneté de la mesure
+         *
+         */
+        long nbSecondes = SECONDS.between(this.dateMesure, Instant.now());
+        if (nbSecondes > GestionPositionsUtilisateurs.DUREE_TRES_ANCIEN)
+            return GestionPositionsUtilisateurs.COULEUR_TRES_ANCIEN;
+        if (nbSecondes > GestionPositionsUtilisateurs.DUREE_ANCIEN)
+            return GestionPositionsUtilisateurs.COULEUR_ANCIEN;
+        return GestionPositionsUtilisateurs.COULEUR_RECENT;
     }
 
     @NonNull

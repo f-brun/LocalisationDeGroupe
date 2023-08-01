@@ -40,11 +40,11 @@ public class GestionPositionsUtilisateurs {
 
     final String SEPARATEUR_ELEMENTS_REPONSE_SERVEUR = "$*$";
     final int TAILLE_LABEL_MARQUEUR = 45;  // Taille des label sous les marqueurs
-    final long DUREE_TRES_ANCIEN = 3600 * 24;  // Durée depuis laquelle on a pas vu la position
-    final int COULEUR_TRES_ANCIEN = Color.RED;
-    final long DUREE_ANCIEN = 60 * 10;
-    final int COULEUR_ANCIEN = Color.GRAY;
-    final int COULEUR_RECENT = Color.BLACK;
+    final static long DUREE_TRES_ANCIEN = 3600 * 24;  // Durée depuis laquelle on a pas vu la position
+    final static int COULEUR_TRES_ANCIEN = Color.RED;
+    final static long DUREE_ANCIEN = 60 * 10;
+    final static int COULEUR_ANCIEN = Color.GRAY;
+    final static int COULEUR_RECENT = Color.BLACK;
 
     private final String NOM_FICHIER_SAUVEGARDE_POSITIONS = "positions.json";
 
@@ -59,7 +59,7 @@ public class GestionPositionsUtilisateurs {
         majPositions(test);
         sauvegardePositions();
 
-         */
+*/
     }
 
     private void ajouteOuMetAJourPosition(String chainePosition) {
