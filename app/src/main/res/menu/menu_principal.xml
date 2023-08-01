@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/item_menu_rafraichir"
+        android:title="@string/item_menu_rafraichir" />
+    <item
+        android:id="@+id/item_menu_redemander_autorisations"
+        android:title="@string/item_menu_autorisations" />
+    <item
+        android:id="@+id/item_menu_reinitialiser_positions"
+        android:title="@string/item_menu_reinitialiser_positions" />
+    <item
+        android:id="@+id/item_menu_quitter"
+        android:title="@string/item_menu_quitter" />
+</menu>
