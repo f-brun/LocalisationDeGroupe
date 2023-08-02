@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:id="@+id/item_menu_rafraichir"
-        android:title="@string/item_menu_rafraichir" />
+        android:id="@+id/item_menu_actualiser"
+        android:title="@string/item_menu_actualiser"
+        android:icon="@drawable/icone_actualiser"
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/item_menu_redemander_autorisations"
         android:title="@string/item_menu_autorisations" />

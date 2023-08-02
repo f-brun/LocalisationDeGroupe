@@ -60,9 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    public void onButtonClicked(final View v) {
     /** Fonction de gestion des clics sur les boutons */
+    public void onButtonClicked(final View v) {
         if (Config.DEBUG_LEVEL > 2) Log.v("mainActivity","***********Bouton appuyé : " + v.getId());
 /*
         switch (v.getId()) {
@@ -90,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.item_menu_rafraichir:
+            case R.id.item_menu_actualiser:
                 if (cfg.fragment_3 != null) {
                     cfg.fragment_3.majTexteInfos();
                     if (cfg.recyclerViewPositions != null)

@@ -29,7 +29,7 @@ public class Communication {
 
     public void demarreCommunicationAvecServeur() {
         // La création de scoket doit se faire dans un autre Thread obligatoirement
-        Thread thread = new Thread(new Runnable() {
+        cfg.threadCommunication = new Thread(new Runnable() {
             @Override
             public void run() {
                 cfg.communicationEnCours = false;
@@ -111,7 +111,6 @@ public class Communication {
                 fermeture();
             }
         });
-        cfg.threadCommunication = thread;
         cfg.threadCommunication.start();
     }
 
@@ -169,11 +168,10 @@ public class Communication {
         cfg.diffuserMaPosition = false;  // Ceci arrêtera le thread de communication avec le serveur
     }
 
-
+    /** Fonction qui s'assure périodiquement que la communication avec le serveur est bien
+     *  active
+     **/
     public void diffusionPositionAuServeur() {
-        /** Fonction qui s'assure périodiquement que la communication avec le serveur est bien
-         *  active
-         **/
         if (cfg.diffuserMaPosition) {
             if (Config.DEBUG_LEVEL > 2) Log.v("Communication","Diffusion de la position via internet");
             if (cfg.fragment_3 != null) cfg.fragment_3.majTexteInfos();
@@ -208,10 +206,10 @@ public class Communication {
 
     }
 
+    /** Met à jour le voyant indicateur de connexion au serveur (présent sur la page
+     * paramètres) en fonction de l'état de la variable cfg.communicationEnCours
+     */
     public void majIndicateurConnexion() {
-        /** Met à jour le voyant indicateur de connexion au serveur (présent sur la page
-         * paramètres) en fonction de l'état de la variable cfg.communicationEnCours
-         */
         if (cfg.indicateurConnexionServeur != null) {
             if (cfg.communicationEnCours) {
                 cfg.indicateurConnexionServeur.setImageDrawable(
@@ -220,7 +218,7 @@ public class Communication {
                 cfg.indicateurConnexionServeur.setImageDrawable(
                         cfg.mainActivity.getBaseContext().getResources().getDrawable(R.drawable.serveur_injoignable));
             }
-            if (cfg.fragment_3 != null) {
+            if (cfg.fragment_3 != null && cfg.fragment_3.getView() != null) {
                 cfg.fragment_3.getView().invalidate();
                 cfg.fragment_3.getView().requestLayout();
             }

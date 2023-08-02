@@ -9,9 +9,9 @@ import androidx.annotation.NonNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.Marker;
 
 import java.time.Instant;
+import java.util.Locale;
 
 public class Position {
     /** Classe représentant la position dans l'espace et le temps d'un utilisateur **/
@@ -19,7 +19,6 @@ public class Position {
     public double latitude;
     public double longitude;
     public Instant dateMesure;   // Date où a été réalisée la mesure
-    Marker marqueur;  // Marqueur Open Street Map associé à cette position
 
     //Config
     static Config cfg = null;;
@@ -44,26 +43,19 @@ public class Position {
         this.latitude = latitude;
         this.longitude = longitude;
         this.dateMesure = Instant.now();
-        /*
-        if (cfg != null && cfg.map != null) {
-            this.marqueur = new Marker(cfg.map);
-            this.marqueur.setPosition(new GeoPoint(latitude, longitude));
-        } else this.marqueur = null;
-         */
     }
 
+    /** Crée une instance de Position à partir d'une chaîne ayant le même format que
+     * Position.toString (champs séparés par SEPARATEUR_CHAMPS) :
+     * Nom
+     * Localisation (2 nombres écrit avec la notation anglosaxone ('.' comme séparateur décimal)
+     *               séparés entre eux SEPARATEUR_LATITUDE_LONGITUDE (dans cet ordre)
+     * Date-heure-timezone  au format classique de la classe Instant
+     * Si la conversion de la chaîne n'est pas possible pour une raison ou une autre, la
+     * position 'invalide' est renvoyée
+     */
     public Position(String chaine) {
-        /** Crée une instance de Position à partir d'une chaîne ayant le même format que
-         * Position.toString (champs séparés par SEPARATEUR_CHAMPS) :
-         * Nom
-         * Localisation (2 nombres écrit avec la notation anglosaxone ('.' comme séparateur décimal)
-         *               séparés entre eux SEPARATEUR_LATITUDE_LONGITUDE (dans cet ordre)
-         * Date-heure-timezone  au format classique de la classe Instant
-         *
-         * Si la conversion de la chaîne n'est pas possible pour une raison ou une autre, la
-         * position 'invalide' est renvoyée
-         */
-        //System.out.println("Création d'une position avec la chaîne : " + chaine);
+        if (Config.DEBUG_LEVEL > 3) Log.v("Position", "Création d'une position avec la chaîne : " + chaine);
         String chaine_originale = chaine;
         Position positionDecodee = new Position(NOM_INVALIDE, LATITUDE_INVALIDE, 0);
         try {
@@ -75,20 +67,13 @@ public class Position {
                 if (separateur > 0) {
                     int positionVirgule = chaine.indexOf(SEPARATEUR_LATITUDE_LONGITUDE);
                     if (positionVirgule > 0) {
-                        positionDecodee.latitude = Double.valueOf(chaine.substring(0, positionVirgule));
+                        positionDecodee.latitude = Double.parseDouble(chaine.substring(0, positionVirgule));
                         chaine = chaine.substring(positionVirgule + SEPARATEUR_LATITUDE_LONGITUDE.length());
                         separateur = chaine.indexOf(SEPARATEUR_CHAMPS);
                         if (separateur > 0) {
-                            positionDecodee.longitude = Double.valueOf(chaine.substring(0, separateur));
+                            positionDecodee.longitude = Double.parseDouble(chaine.substring(0, separateur));
                             chaine = chaine.substring(separateur + SEPARATEUR_CHAMPS.length());
                             positionDecodee.dateMesure = Instant.parse(chaine);
-                            //System.out.println("Création réussie : " + this.toString());
-                        /*
-                        if (cfg != null && cfg.map != null) {
-                            this.marqueur = new Marker(cfg.map);
-                            this.marqueur.setPosition(new GeoPoint(this.latitude, this.longitude));
-                        } else this.marqueur = null;
-                         */
                             this.nom = positionDecodee.nom;
                             this.latitude = positionDecodee.latitude;
                             this.longitude = positionDecodee.longitude;
@@ -128,28 +113,18 @@ public class Position {
         this.latitude = latitude;
         this.longitude = longitude;
         this.dateMesure = Instant.now();
-        /*
-        if (this.marqueur != null) {
-            this.marqueur.setPosition(new GeoPoint(latitude, longitude));
-        } else if (cfg != null && cfg.map != null) {
-            this.marqueur = new Marker(cfg.map);
-            this.marqueur.setPosition(new GeoPoint(latitude, longitude));
-        }
-        */
     }
-
+    /** Met à jour une position à partir d'une nouvelle position : seul le nom est à conserver **/
     public void majPosition(Position nouvellePosition) {
-        /** Met à jour une position à partir d'une nouvelle position : seul le nom est à conserver **/
         this.latitude = nouvellePosition.latitude;
         this.longitude = nouvellePosition.longitude;
         this.dateMesure = nouvellePosition.dateMesure;
-        //this.marqueur = nouvellePosition.marqueur;
     }
 
+    /** Renvoie true si la position donnée est valide (vérifie la présence des champs et
+     *  leurs valeurs (dans les bornes acceptables)
+     **/
     public boolean estPositionValide() {
-        /** Renvoie true si la position donnée est valide (vérifie la présence des champs et
-         *  leurs valeurs (dans les bornes acceptables)
-         **/
         if (this.nom == null || this.nom.length() == 0 ||
                 this.nom.length() > LIMITE_NOM_LONG) return false;
         if (this.latitude < -90 || this.latitude > 90) return false;
@@ -182,16 +157,16 @@ public class Position {
         return new GeoPoint(this.latitude, this.longitude);
     }
 
-
+    /** Renvoi une chaîne représentant l'ancienneté de la position en nombre d'années, mois,
+     * jours, heures, minutes secondes
+     */
     public String getAnciennete() {
-        /** Renvoi une chaîne représentant l'ancienneté de la position en nombre d'années, mois,
-         * jours, heures, minutes secondes
-          */
         final long NB_SECONDES_DS_1_AN = (long) (365.25 * 24 * 3600);
         final long NB_SECONDES_DS_1_MOIS = (long) (30.5 * 24 * 3600);
         final long NB_SECONDES_DS_1_JOUR = 24 * 3600;
         // Détermination du nb de secondes depuis la mesure
         long nbSecondes = SECONDS.between(this.dateMesure, Instant.now());
+        if (nbSecondes <= 3) return "A l'instant";
         // Calcul du nb d'années/mois/jours/h/m/s
         long nbAnnees = nbSecondes / NB_SECONDES_DS_1_AN;
         nbSecondes = nbSecondes % NB_SECONDES_DS_1_AN;
@@ -204,27 +179,24 @@ public class Position {
         long nbMinutes = nbSecondes / 60;
         nbSecondes = nbSecondes % 60;
         // Création de la chaîne à afficher
-        if (nbSecondes <= 3) return "A l'instant";
-        String chaine = "Il y a";
+        StringBuilder chaine = new StringBuilder("Il y a");
         final long[] VALEURS_REMPLISSAGE = {nbAnnees, nbMois, nbJours, nbHeures, nbMinutes, nbSecondes};
         final String[] TEXTE_REMPLISSAGE = {" an", " mois", " j", " h", " m", " s"};
         for (int i = 0 ; i < VALEURS_REMPLISSAGE.length ; i++) {
             if (VALEURS_REMPLISSAGE[i] > 0) {
                 if (TEXTE_REMPLISSAGE[i].equals("an") && VALEURS_REMPLISSAGE[i] > 1) {
-                    chaine += VALEURS_REMPLISSAGE[i] + " ans";
+                    chaine.append(VALEURS_REMPLISSAGE[i]).append(" ans");
                 } else {
-                    if (chaine.length() != 0) chaine += " ";
-                    chaine += VALEURS_REMPLISSAGE[i] + TEXTE_REMPLISSAGE[i];
+                    if (chaine.length() != 0) chaine.append(" ");
+                    chaine.append(VALEURS_REMPLISSAGE[i]).append(TEXTE_REMPLISSAGE[i]);
                 }
             }
         }
-        return chaine;
+        return chaine.toString();
     }
 
+    /** Renvoi la couleur correspondant à l'ancienneté de la mesure */
     public int couleurAnciennete() {
-        /** Renvoi la couleur correspondant à l'ancienneté de la mesure
-         *
-         */
         long nbSecondes = SECONDS.between(this.dateMesure, Instant.now());
         if (nbSecondes > GestionPositionsUtilisateurs.DUREE_TRES_ANCIEN)
             return GestionPositionsUtilisateurs.COULEUR_TRES_ANCIEN;
@@ -236,11 +208,12 @@ public class Position {
     @NonNull
     @Override
     public String toString() {
+        Locale locale = new Locale("en", "UK");  // Pour avoir le point en séparateur décimal
         return nom
          + SEPARATEUR_CHAMPS
-         + String.format(FORMAT_AFFICHAGE_POSITION, this.latitude).replace(',','.')
+         + String.format(locale, FORMAT_AFFICHAGE_POSITION, this.latitude)
          + SEPARATEUR_LATITUDE_LONGITUDE
-         + String.format(FORMAT_AFFICHAGE_POSITION, this.longitude).replace(',','.')
+         + String.format(locale, FORMAT_AFFICHAGE_POSITION, this.longitude)
          + SEPARATEUR_CHAMPS
          + this.dateMesure.toString() ;
     }

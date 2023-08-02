@@ -19,7 +19,7 @@
     <string name="label_nom_angle_minutes_secondes">En angle/minutes/secondes</string>
     <string name="label_nom_latitude">Latitude :</string>
     <string name="label_nom_longitude">Longitude :</string>
-    <string name="item_menu_rafraichir">Rafraîchir</string>
+    <string name="item_menu_actualiser">Rafraîchir</string>
     <string name="item_menu_autorisations">Redemander autorisations</string>
     <string name="item_menu_reinitialiser_positions">Réinitialiser les positions</string>
     <string name="item_menu_parametres">Paramètres</string>
