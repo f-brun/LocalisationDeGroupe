@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                         ( (RecyclerViewAdapterListeUtilisateurs) Objects.requireNonNull(cfg.recyclerViewPositions.getAdapter())).majListeUtilisateurs();
                     Objects.requireNonNull(cfg.fragment_3.getView()).invalidate();   // Pour forcer la mise à jour de l'affichage
                     cfg.fragment_3.getView().requestLayout();
+                    if (cfg.map != null) cfg.map.invalidate();
                 }
                 if (cfg.com != null) cfg.com.majIndicateurConnexion();
                 return true;
@@ -129,23 +130,12 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         if (Config.DEBUG_LEVEL > 2) Log.v("mainActivity","Méthode onResume appellée. cfg = "+ cfg);
-        //this will refresh the osmdroid configuration on resuming.
-        //if you make changes to the configuration, use
-        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        //Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
-        if (cfg.map != null) cfg.map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
     }
 
     @Override
     public void onPause() {
         super.onPause();
         if (Config.DEBUG_LEVEL > 2) Log.v("mainActivity","Méthode onPause appellée. cfg = "+ cfg);
-        //this will refresh the osmdroid configuration on resuming.
-        //if you make changes to the configuration, use
-        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        //Configuration.getInstance().save(this, prefs);
-        if (cfg.map != null)
-            cfg.map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
     }
 
     @Override

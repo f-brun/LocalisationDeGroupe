@@ -10,25 +10,29 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
 import org.patarasprod.localisationdegroupe.databinding.FragmentPrincipalBinding;
+import org.patarasprod.localisationdegroupe.views.OnPageChangeCallback_ViewPager2;
 
 public class FragmentPrincipal extends NavHostFragment {
 
     // Tableau donnant la visibilité du bouton permettant de centrer sur ma position en fonction du numéro de l'onglet
-    private final boolean[] visibiliteFab = {true, true, false, false};
+    private final int[] visibiliteFab = {View.VISIBLE, View.VISIBLE, View.GONE, View.GONE};
+
     private FragmentPrincipalBinding binding;
-    private Context contexte;
+    MyAdapter adapter;
     Config cfg;
 
     TabLayout tabLayout;
-    ViewPager viewPager;
+    ViewPager2 viewPager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,7 +44,6 @@ public class FragmentPrincipal extends NavHostFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        contexte = context;
     }
 
     @Override
@@ -66,29 +69,20 @@ public class FragmentPrincipal extends NavHostFragment {
           et nottamment la méthode setUserInputEnabled pour désactiver le swipe
          */
 
-        viewPager = binding.viewPager2; //findViewById(R.id.viewPager2);
-
-        if (Config.DEBUG_LEVEL > 3) Log.v("Fragment principal",
-                "OnCreateView fragment principal. FragmentManager = " +
-                        ((MainActivity) requireActivity()).getSupportFragmentManager());
-        final MyAdapter adapter = new MyAdapter(this.contexte, ((MainActivity) requireActivity()).getSupportFragmentManager(),
-                tabLayout.getTabCount());
-
+        viewPager = (ViewPager2) binding.viewPager2; //findViewById(R.id.viewPager2);
+        adapter = new MyAdapter(cfg.mainActivity, tabLayout.getTabCount());
+        viewPager.setAdapter(adapter);
+        viewPager.registerOnPageChangeCallback(new OnPageChangeCallback_ViewPager2(cfg));
 
         cfg.viewPager = viewPager;
+        cfg.adapterViewPager = adapter;
 
-
-        viewPager.setAdapter(adapter);
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                // Affiche ou non le floating action button pour centrer la carte sur MaPosition
+                cfg.centrerSurMaPosition.setVisibility(visibiliteFab[tab.getPosition()]);
                 viewPager.setCurrentItem(tab.getPosition());
-                if (visibiliteFab[tab.getPosition()]) {
-                    cfg.centrerSurMaPosition.setVisibility(View.VISIBLE);
-                } else {
-                    cfg.centrerSurMaPosition.setVisibility(View.GONE);
-                }
             }
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
@@ -97,6 +91,8 @@ public class FragmentPrincipal extends NavHostFragment {
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
+
+        viewPager.setUserInputEnabled(false);
 
         binding.fabCentrerSurMaPosition.setOnClickListener(new View.OnClickListener() {
             @Override

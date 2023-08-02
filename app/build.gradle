@@ -48,4 +48,8 @@ dependencies {
 
     // Pour OpenStreetMap
     implementation 'org.osmdroid:osmdroid-android:6.1.13'
+
+    // Pour utiliser viewPager2
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
+
 }

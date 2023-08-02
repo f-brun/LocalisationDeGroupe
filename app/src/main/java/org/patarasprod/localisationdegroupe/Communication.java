@@ -34,6 +34,11 @@ public class Communication {
             @Override
             public void run() {
                 cfg.communicationEnCours = false;
+                // Si on ne connaît pas notre position, on ne démarre pas la communication et on sort tout de suite
+                if (cfg.maPosition == null) {
+                    if (Config.DEBUG_LEVEL > 1) Log.v("Communication","Communication non initiée car notre position est inconnue");
+                    return;
+                }
                 try {
                     //Création d'un socket
                     //if (Config.DEBUG_LEVEL > 4) Log.v("Communication","Création du socket client");

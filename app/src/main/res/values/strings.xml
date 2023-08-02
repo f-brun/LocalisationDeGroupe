@@ -41,4 +41,5 @@
     <string name="description_label_nom">Nom</string>
     <string name="label_nom_serveur">Adresse (nom) du serveur :</string>
     <string name="label_port_serveur">Port du serveur :</string>
+    <string name="centrer_sur_moi">Centrer sur moi</string>
 </resources>

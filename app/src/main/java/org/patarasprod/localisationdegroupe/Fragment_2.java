@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
@@ -50,12 +51,16 @@ public class Fragment_2 extends Fragment {
         cfg = ((MainActivity) requireActivity()).recupere_configuration();
         if (Config.DEBUG_LEVEL > 3) Log.v("Fragment 2","onCreateView Fragment2 cfg = " + cfg);
         cfg.map = binding.map;
+
+        // Nécessaire pour que la mapView ne soit pas détachée de la fenêtre dès qu'on quitte l'onglet
+        binding.map.setDestroyMode(false);
+
         cfg.map.setTileSource(TileSourceFactory.MAPNIK);
         //Configuration du user-agent pour indiquer à Mapnik qui utilise leurs services
         Configuration.getInstance().setUserAgentValue("Localisation-de-groupe");
 
         //Configuration de la carte
-        cfg.map.setBuiltInZoomControls(true);
+        cfg.map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT);
         cfg.map.setMultiTouchControls(true);   // Possibilité de zoomer
         mRotationGestureOverlay = new RotationGestureOverlay(cfg.map);
         mRotationGestureOverlay.setEnabled(true);
@@ -87,7 +92,7 @@ public class Fragment_2 extends Fragment {
         cfg.map.getOverlays().add(cfg.maPosition_LocationOverlay);
 
         // Scalemap : échelle en surimpression
-        DisplayMetrics dm = requireActivity().getResources().getDisplayMetrics();
+        final DisplayMetrics dm = requireActivity().getResources().getDisplayMetrics();
         ScaleBarOverlay mScaleBarOverlay = new ScaleBarOverlay(cfg.map);
         mScaleBarOverlay.setCentred(true);
         //play around with these values to get the location on screen in the right place for your application
@@ -102,15 +107,31 @@ public class Fragment_2 extends Fragment {
     public void onResume() {
         super.onResume();
         if (Config.DEBUG_LEVEL > 3) Log.v("Fragment 2","onResume Fragment2 cfg = " + cfg);
+        //this will refresh the osmdroid configuration on resuming.
+        //if you make changes to the configuration, use
+        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        //Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
+        if (cfg.map != null) {
+            if (Config.DEBUG_LEVEL > 3) Log.v("Fragment 2","cfg.map = " + cfg.map + "  - Appel de map.onResume()");
+            cfg.map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
         if (Config.DEBUG_LEVEL > 3) Log.v("Fragment 2","onPause Fragment2 cfg = " + cfg);
-        cfg.centreCarte = (GeoPoint) cfg.map.getMapCenter();
-        cfg.niveauZoomCarte = cfg.map.getZoomLevelDouble();
-        cfg.orientationCarte = cfg.map.getMapOrientation();
+        //this will refresh the osmdroid configuration on resuming.
+        //if you make changes to the configuration, use
+        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        //Configuration.getInstance().save(this, prefs);
+        if (cfg.map != null) {
+            if (Config.DEBUG_LEVEL > 3) Log.v("Fragment 2","cfg.map = " + cfg.map + "  - Appel de map.onPause()");
+            cfg.centreCarte = (GeoPoint) cfg.map.getMapCenter();
+            cfg.niveauZoomCarte = cfg.map.getZoomLevelDouble();
+            cfg.orientationCarte = cfg.map.getMapOrientation();
+            cfg.map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
+        }
     }
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {

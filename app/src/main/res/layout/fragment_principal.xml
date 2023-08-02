@@ -42,7 +42,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.viewpager.widget.ViewPager
+    <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -53,9 +53,7 @@
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
         app:layout_constraintVertical_bias="1.0"
         tools:ignore="NotSibling"
-        tools:swipeEnabled="false">
-
-    </androidx.viewpager.widget.ViewPager>
+        tools:swipeEnabled="false" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_centrer_sur_ma_position"
@@ -64,7 +62,7 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="4dp"
-        android:contentDescription="Centrer sur moi"
+        android:contentDescription="@string/centrer_sur_moi"
         app:layout_constraintBottom_toBottomOf="@+id/viewPager2"
         app:layout_constraintEnd_toEndOf="@+id/viewPager2"
         app:maxImageSize="40dp"

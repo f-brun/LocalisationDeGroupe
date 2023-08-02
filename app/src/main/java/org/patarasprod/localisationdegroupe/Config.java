@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.app.ActionBar;
 import android.content.Context;
@@ -28,13 +29,15 @@ import org.patarasprod.localisationdegroupe.views.RecyclerViewAdapterListeUtilis
 public class Config {
     public static int DEBUG_LEVEL = 4; // Niveau d'expressivité des messages de debug (0 = aucun message)
 
+
     protected Context contexte;
     protected AssetManager manager;
     protected ActionBar barreTitre;
     public FragmentManager fragmentManager;
     public NavController navController;
 
-    public ViewPager viewPager = null;
+    public ViewPager2 viewPager = null;
+    public MyAdapter adapterViewPager;
 
     // *******************************************
     // *** Préférences (paramètres) sauvegardés
