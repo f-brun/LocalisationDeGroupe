@@ -47,13 +47,12 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_centerInParent="true"
+        tools:swipeEnabled="false"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
         app:layout_constraintVertical_bias="1.0"
         tools:ignore="NotSibling"
-        tools:swipeEnabled="false">
+        tools:layout_editor_absoluteX="0dp">
 
     </androidx.viewpager.widget.ViewPager>
 

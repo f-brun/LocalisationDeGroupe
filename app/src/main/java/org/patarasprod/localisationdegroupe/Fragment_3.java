@@ -13,6 +13,7 @@ import org.patarasprod.localisationdegroupe.databinding.Fragment3Binding;
 import org.patarasprod.localisationdegroupe.views.RecyclerViewAdapterListeUtilisateurs;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -87,7 +88,7 @@ public class Fragment_3 extends Fragment {
 
     public void majListeUtilisateurs() {
         RecyclerViewAdapterListeUtilisateurs adapter = (RecyclerViewAdapterListeUtilisateurs) cfg.recyclerViewPositions.getAdapter();
-        for (int i = 0 ; i < adapter.getItemCount() ; i++) {
+        for (int i = 0; i < Objects.requireNonNull(adapter).getItemCount() ; i++) {
             long noView = adapter.getItemId(i);
             View view = cfg.mainActivity.findViewById((int) adapter.getItemId(i));
         }

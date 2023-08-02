@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -212,11 +213,15 @@ public class Communication {
     public void majIndicateurConnexion() {
         if (cfg.indicateurConnexionServeur != null) {
             if (cfg.communicationEnCours) {
-                cfg.indicateurConnexionServeur.setImageDrawable(
-                        cfg.mainActivity.getBaseContext().getResources().getDrawable(R.drawable.serveur_actif));
+                cfg.indicateurConnexionServeur.setImageDrawable(ResourcesCompat.getDrawable(
+                        cfg.mainActivity.getBaseContext().getResources(),
+                        R.drawable.serveur_actif,
+                        cfg.mainActivity.getBaseContext().getTheme()));
             } else {
-                cfg.indicateurConnexionServeur.setImageDrawable(
-                        cfg.mainActivity.getBaseContext().getResources().getDrawable(R.drawable.serveur_injoignable));
+                cfg.indicateurConnexionServeur.setImageDrawable(ResourcesCompat.getDrawable(
+                        cfg.mainActivity.getBaseContext().getResources(),
+                        R.drawable.serveur_injoignable,
+                        cfg.mainActivity.getBaseContext().getTheme()));
             }
             if (cfg.fragment_3 != null && cfg.fragment_3.getView() != null) {
                 cfg.fragment_3.getView().invalidate();

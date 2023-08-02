@@ -17,6 +17,8 @@ import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
+import java.util.Locale;
+
 
 public final class LocalisationGPS implements LocationListener {
 
@@ -40,13 +42,17 @@ public final class LocalisationGPS implements LocationListener {
     private static final long MIN_TIME_BW_UPDATES = 1000; // 1 seconde
     private static final String FORMAT_AFFICHAGE_POSITION = "%.7f";
     private static final String FORMAT_AFFICHAGE_ALTITUDE = "%.0f";
+
+    Locale localeEn = new Locale("en", "UK");  // Pour avoir le point en séparateur décimal
+//    Locale localeFr = new Locale("fr", "FR");  // Pour avoir la virgule en séparateur décimal
+
     // Declaring a Location Manager
     public LocationManager locationManager;
 
     public LocalisationGPS(Context context, Config config) {
         this.mContext = context;
         cfg = config;
-        Log.v("LocalisationGPS", "Initialisation du système");
+        if (Config.DEBUG_LEVEL > 3) Log.v("LocalisationGPS", "Initialisation du système");
         initialisations();
         getLocalisation();
     }
@@ -61,11 +67,11 @@ public final class LocalisationGPS implements LocationListener {
 
                 // Est-ce que la localisation par le réseau (Network) est dispo ?
                 NetworkDisponible = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-                Log.d("LocalisationGPS", "Network disponible :" + NetworkDisponible);
+                if (Config.DEBUG_LEVEL > 1) Log.v("LocalisationGPS", "Network disponible :" + NetworkDisponible);
 
                 // Le GPS est-il disponible ?
                 GPSDisponible = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-                Log.d("LocalisationGPS", "GPS disponible :" + GPSDisponible);
+                if (Config.DEBUG_LEVEL > 1) Log.v("LocalisationGPS", "GPS disponible :" + GPSDisponible);
 
                 getLocalisation();
             }
@@ -98,9 +104,8 @@ public final class LocalisationGPS implements LocationListener {
     /**
      * Récupère la localisation actuelle
      *
-     * @return
+     * @return localisation actuelle (objet Location) ou null si échec
      */
-
     @SuppressLint("MissingPermission")
     public Location getLocalisation() {
         if (demandeAutorisationsLocalisation()) {
@@ -110,7 +115,7 @@ public final class LocalisationGPS implements LocationListener {
             GPSDisponible = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             if (!GPSDisponible && !NetworkDisponible) {
                 // no network provider is enabled
-                Log.v("LocalisationGPS", "Aucun accès à une méthode de localisation");
+                if (Config.DEBUG_LEVEL > 0) Log.v("LocalisationGPS", "Aucun accès à une méthode de localisation");
                 return null;
             } else if (GPSDisponible) {
                 localisation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -138,6 +143,7 @@ public final class LocalisationGPS implements LocationListener {
         return null;
     }
 
+    @SuppressLint("DefaultLocale")
     public void actualise_position() {
         if (cfg.textViewLocalisation != null) {
             cfg.textViewLocalisation.setText(coordsSurDeuxLignes());
@@ -237,13 +243,8 @@ public final class LocalisationGPS implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        //    System.out.println("************ Position modifiée !");
+        if (Config.DEBUG_LEVEL > 4) Log.v("LocalisationGPS", "Position modifiée");
         getLocalisation();
-    /*    System.out.println("=" + coordsSurUneLigne());
-        System.out.println("=>" + conversionEnDegresMinutesSecondes(latitude) + "N, " +
-                conversionEnDegresMinutesSecondes(longitude) +"E");
-
-     */
         actualise_position();
     }
 
@@ -259,21 +260,21 @@ public final class LocalisationGPS implements LocationListener {
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        System.out.println("************ Status modifiée !");
+        if (Config.DEBUG_LEVEL > 3) Log.v("LocalisationGPS","Status modifié");
         // TODO
     }
     public String coordsSurUneLigne() {
-        return String.format(FORMAT_AFFICHAGE_POSITION,latitude) +
-                "N, " + String.format(FORMAT_AFFICHAGE_POSITION, longitude) + "E";
+        return String.format(localeEn, FORMAT_AFFICHAGE_POSITION,latitude) +
+                "N, " + String.format(localeEn, FORMAT_AFFICHAGE_POSITION, longitude) + "E";
     }
     public String coordsSurDeuxLignes() {
-        return String.format(FORMAT_AFFICHAGE_POSITION,latitude) + "N\n"
-               + String.format(FORMAT_AFFICHAGE_POSITION, longitude) + "E";
+        return String.format(localeEn, FORMAT_AFFICHAGE_POSITION,latitude) + "N\n"
+               + String.format(localeEn, FORMAT_AFFICHAGE_POSITION, longitude) + "E";
     }
     public String conversionEnDegresMinutesSecondes(double angle) {
         int degres = (int) angle;
         int minutes = (int) ((angle - ((double)degres) ) * 60);
         double secondes = (angle - ((double)degres) - ((double)minutes/60)) * 3600;
-        return "" + degres + "°" + minutes + "'" + String.format("%.3f", secondes) + '"';
+        return "" + degres + "°" + minutes + "'" + String.format(localeEn, "%.3f", secondes) + '"';
     }
 }

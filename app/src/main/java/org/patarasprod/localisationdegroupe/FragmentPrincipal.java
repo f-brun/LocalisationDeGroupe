@@ -120,10 +120,8 @@ public class FragmentPrincipal extends NavHostFragment {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 view.getParent().requestDisallowInterceptTouchEvent(true);
-                switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
-                    case MotionEvent.ACTION_UP:
-                        view.getParent().requestDisallowInterceptTouchEvent(false);
-                        break;
+                if ((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
+                    view.getParent().requestDisallowInterceptTouchEvent(false);
                 }
                 return false;
             }

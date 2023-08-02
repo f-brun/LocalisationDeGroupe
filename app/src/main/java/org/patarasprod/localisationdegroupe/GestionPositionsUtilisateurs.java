@@ -2,15 +2,11 @@ package org.patarasprod.localisationdegroupe;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
-import android.os.Environment;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,22 +14,19 @@ import org.json.JSONObject;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Overlay;
-import org.osmdroid.views.overlay.OverlayItem;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.Instant;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 public class GestionPositionsUtilisateurs {
     public Map positions = new HashMap();   // Positions des utilisateurs
@@ -62,31 +55,30 @@ public class GestionPositionsUtilisateurs {
 */
     }
 
+    /** Ajoute ou insère une position dans la hashmap 'positions' à partir de la chaîne
+     *  de caractère donnée en argument.
+     * Si la position est invalide, logge une erreur avec la chaine d'origine.
+     */
     private void ajouteOuMetAJourPosition(String chainePosition) {
-        /** Ajoute ou insère une position dans la hashmap 'positions' à partir de la chaîne
-         *  de caractère donnée en argument.
-         * Si la position est invalide, logge une erreur avec la chaine d'origine.
-         */
         Position position = new Position(chainePosition);
         if (position.nom.equals(Position.NOM_INVALIDE)) {
             Log.v("Cartographie", "Position invalide détectée dans la chaîne " + chainePosition);
         }
         else {
             if (positions.containsKey(position.nom)) {
-                ((Position) this.positions.get(position.nom)).majPosition(position);
+                ((Position) Objects.requireNonNull(this.positions.get(position.nom))).majPosition(position);
             } else {
                 positions.put(position.nom, position);
             }
         }
     }
 
+    /** Met à jour la hashmap des positions à partir de la réponse du serveur
+     * Celle-ci est sous la forme d'un dictionnaire python (entre accolades) avec des clés
+     * représentant les noms des utilisateurs
+     */
     public void majPositions(String reponseServeur) {
-        /** Met à jour la hashmap des positions à partir de la réponse du serveur
-         * Celle-ci est sous la forme d'un dictionnaire python (entre accolades) avec des clés
-         * représentant les noms des utilisateurs
-         */
         if (Config.DEBUG_LEVEL > 3) Log.v("Cartographie", "appel de la mise à jour position");
-        Position position ;  // Position pour chaque entrée de la réponse serveur
         int separateur = reponseServeur.indexOf(SEPARATEUR_ELEMENTS_REPONSE_SERVEUR);
         while (separateur >= 0) {
             // On mémorise la ligne actuelle
@@ -110,11 +102,11 @@ public class GestionPositionsUtilisateurs {
         }
     }
 
+    /** Procédure qui met à jour les marqueurs de position sur la carte à partir de la liste
+     * d'objets Position se trouvant dans la hashmap "positions"
+     */
     @SuppressLint("UseCompatLoadingForDrawables")
     public void majPositionsSurLaCarte() {
-        /** Procédure qui met à jour les marqueurs de position sur la carte à partir de la liste
-         * d'objets Position se trouvant dans la hashmap "positions"
-         */
         if (cfg.map == null) {
             Log.v("Cartographie", "appel de la mise à jour sur carte null");
             return ;
@@ -142,7 +134,10 @@ public class GestionPositionsUtilisateurs {
                 marqueur = new MarkerWithLabel(cfg.map, nomUtilisateur);
                 if (Config.DEBUG_LEVEL > 4)  Log.v("GestionPositionUtilisateurs","#### Juste APRES instruction qui fait planter avec map qui vaut :" + cfg.map);
                 marqueur.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-                marqueur.setIcon(cfg.contexte.getResources().getDrawable(idImageMarqueur(position)));
+                marqueur.setIcon(ResourcesCompat.getDrawable(
+                        cfg.mainActivity.getBaseContext().getResources(),
+                        idImageMarqueur(position),
+                        cfg.mainActivity.getBaseContext().getTheme()));
                 marqueur.setTitle(nomUtilisateur);
                 marqueur.setLabelTextColor(couleurEnFonctionDeLAnciennete(position));
                 marqueur.setLabelFontSize(TAILLE_LABEL_MARQUEUR);
@@ -154,10 +149,10 @@ public class GestionPositionsUtilisateurs {
         cfg.map.invalidate();  // Pour forcer à redessiner
     }
 
+    /** Renvoie true si la position donnée est valide (vérifie la présence des champs et
+     *  leurs valeurs (dans les bornes acceptables)
+     */
     private boolean estPositionValide(Position position) {
-        /** Renvoie true si la position donnée est valide (vérifie la présence des champs et
-         *  leurs valeurs (dans les bornes acceptables)
-         */
         if (position == null) return false;
         return position.estPositionValide();
     }
@@ -178,7 +173,7 @@ public class GestionPositionsUtilisateurs {
         Iterator<String> iter = positions.keySet().iterator();
         while (iter.hasNext()) {
             nomUtilisateur = iter.next();
-            liste[i] = this.positions.get(nomUtilisateur).toString();
+            liste[i] = Objects.requireNonNull(this.positions.get(nomUtilisateur)).toString();
             if (Config.DEBUG_LEVEL > 3)  Log.v("GestionPositionUtilisateurs","Elément n°" + i + " (" + nomUtilisateur + ") : " + liste[i]);
             i++;
         }
@@ -228,14 +223,14 @@ public class GestionPositionsUtilisateurs {
         } else {
             try {
                 BufferedReader lecteur = new BufferedReader(new InputStreamReader(cfg.mainActivity.getBaseContext().openFileInput(fichier.getName())));
-                String contenuFichier = "";
+                StringBuilder contenuFichier = new StringBuilder();
                 String ligne;
                 while ((ligne = lecteur.readLine()) != null) {
-                    contenuFichier += ligne;
+                    contenuFichier.append(ligne);
                 }
                 lecteur.close();
                 if (contenuFichier.length() > 10) {  // Si des choses ont étées lues
-                    JSONArray contenuJSON = new JSONArray(contenuFichier);
+                    JSONArray contenuJSON = new JSONArray(contenuFichier.toString());
                     fusionnePositions(contenuJSON);
                 }
                 if (cfg != null && Config.DEBUG_LEVEL > 3)
@@ -253,11 +248,11 @@ public class GestionPositionsUtilisateurs {
         }
     }
 
+    /** Fonction qui fusionne le tableau de positions dans le JSONArray fournit en argument
+     * avec les positions actuellement stockées : ajoute les positions manquante et met à jour
+     * les positions existantes si elles sont plus récentes.
+     */
     private void fusionnePositions(JSONArray contenuJSON) {
-        /** Fonction qui fusionne le tableau de positions dans le JSONArray fournit en argument
-         * avec les positions actuellement stockées : ajoute les positions manquante et met à jour
-         * les positions existantes si elles sont plus récentes.
-         */
         Position positionJSON;
         for (int i = 0 ; i < contenuJSON.length() ; i++) {
             try {
@@ -295,8 +290,8 @@ public class GestionPositionsUtilisateurs {
         return tabIdMarqueurs[hash % (tabIdMarqueurs.length)];
     }
 
+    /** Fonction qui renvoie un ArrayList des positions gérées **/
     public ArrayList<Position> getListePositions() {
-        /** Fonction qui renvoie un ArrayList des positions gérées **/
         ArrayList<Position> liste = new ArrayList<Position>();
         Iterator<String> iter = positions.keySet().iterator();
         while (iter.hasNext()) {
@@ -310,15 +305,15 @@ public class GestionPositionsUtilisateurs {
     @Override
     public String toString() {
         String[] lignes = this.listePositions();
-        String chaine = "";
+        StringBuilder chaine = new StringBuilder();
         for (String ligne : lignes) {
-            chaine += ligne + "\n";
+            chaine.append(ligne).append("\n");
         }
-        return chaine;
+        return chaine.toString();
     }
 
+    /** Réinitialise les positions gérées en vidant la liste **/
     public void reinitialise_positions() {
-        /** Réinitialise les positions gérées en vidant la liste **/
         this.positions.clear();
     }
 }

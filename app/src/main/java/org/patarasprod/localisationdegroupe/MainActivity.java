@@ -13,12 +13,11 @@ import androidx.navigation.ui.AppBarConfiguration;
 import org.patarasprod.localisationdegroupe.databinding.ActivityMainBinding;
 import org.patarasprod.localisationdegroupe.views.RecyclerViewAdapterListeUtilisateurs;
 
+import java.util.Objects;
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
-    private ActivityMainBinding binding;
-
-
     protected Config cfg;
 
     @Override
@@ -26,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         cfg = new Config(this);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        org.patarasprod.localisationdegroupe.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         if (Config.DEBUG_LEVEL > 3) Log.v("mainActivity", "SetContentView du Oncreate de l'activité effectué avec succès");
         cfg.fragmentManager = getSupportFragmentManager();
@@ -93,8 +92,8 @@ public class MainActivity extends AppCompatActivity {
                 if (cfg.fragment_3 != null) {
                     cfg.fragment_3.majTexteInfos();
                     if (cfg.recyclerViewPositions != null)
-                        ( (RecyclerViewAdapterListeUtilisateurs)  cfg.recyclerViewPositions.getAdapter()).majListeUtilisateurs();
-                    cfg.fragment_3.getView().invalidate();   // Pour forcer la mise à jour de l'affichage
+                        ( (RecyclerViewAdapterListeUtilisateurs) Objects.requireNonNull(cfg.recyclerViewPositions.getAdapter())).majListeUtilisateurs();
+                    Objects.requireNonNull(cfg.fragment_3.getView()).invalidate();   // Pour forcer la mise à jour de l'affichage
                     cfg.fragment_3.getView().requestLayout();
                 }
                 if (cfg.com != null) cfg.com.majIndicateurConnexion();
@@ -152,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //System.out.println("*****************CREATION MENU *****************");
+        if (Config.DEBUG_LEVEL > 4) Log.v("mainActivity","*****************CREATION MENU *****************");
         getMenuInflater().inflate(R.menu.menu_principal, menu);
         return true;
     }
