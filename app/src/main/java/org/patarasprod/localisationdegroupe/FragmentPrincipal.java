@@ -24,9 +24,6 @@ import org.patarasprod.localisationdegroupe.views.OnPageChangeCallback_ViewPager
 
 public class FragmentPrincipal extends NavHostFragment {
 
-    // Tableau donnant la visibilité du bouton permettant de centrer sur ma position en fonction du numéro de l'onglet
-    private final int[] visibiliteFab = {View.VISIBLE, View.VISIBLE, View.GONE, View.GONE};
-
     private FragmentPrincipalBinding binding;
     MyAdapter adapter;
     Config cfg;
@@ -57,8 +54,9 @@ public class FragmentPrincipal extends NavHostFragment {
 
         cfg = ((MainActivity) requireActivity()).recupere_configuration();
 
-        // Bouton flottant permettant de centrer sur ma position;
+        // Boutons flottants
         cfg.centrerSurMaPosition = binding.fabCentrerSurMaPosition;
+        cfg.fabInfo = binding.fabInfo;
 
         if (Config.DEBUG_LEVEL > 3) Log.v("Fragment principal","CREATION View FRAGMENT PRINCIPAL");
 
@@ -80,8 +78,6 @@ public class FragmentPrincipal extends NavHostFragment {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                // Affiche ou non le floating action button pour centrer la carte sur MaPosition
-                cfg.centrerSurMaPosition.setVisibility(visibiliteFab[tab.getPosition()]);
                 viewPager.setCurrentItem(tab.getPosition());
             }
             @Override
@@ -94,6 +90,7 @@ public class FragmentPrincipal extends NavHostFragment {
 
         viewPager.setUserInputEnabled(false);
 
+        // Boputon flottant (Floating Action Button) pour centrer sur notre position
         binding.fabCentrerSurMaPosition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,9 +99,21 @@ public class FragmentPrincipal extends NavHostFragment {
                 if (cfg != null && cfg.mapController != null)
                     cfg.mapController.setCenter(cfg.maPosition.getGeoPoint());
                 // On bascule sur l'onglet 1 (la carte)
-                if (cfg != null && cfg.viewPager != null) cfg.viewPager.setCurrentItem(1);
+                if (cfg != null && cfg.viewPager != null) {
+                    cfg.viewPager.setCurrentItem(1);
+                    //cfg.viewPager.invalidate();
+                }
             }
         });
+
+        // Boputon flottant (Floating Action Button) d'information
+        binding.fabInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, cfg.TEXTE_BOUTON_INFO, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            }
+        });
+
         if (Config.DEBUG_LEVEL > 3) Log.v("Fragment principal", "---Fin du OnCreateView du fragment principal");
 
         disableTouchTheft(root);

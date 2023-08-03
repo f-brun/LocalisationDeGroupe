@@ -26,17 +26,13 @@ public class MyAdapter extends androidx.viewpager2.adapter.FragmentStateAdapter 
         if (Config.DEBUG_LEVEL > 3) Log.v("MyAdapter","Méthode Fragment appellée avec position = " + position);
         switch (position) {
             case 0:
-                Fragment_1 fragment = new Fragment_1();
-                return fragment;
+                return new Fragment_1();
             case 1:
-                Fragment_2 fragment2 = new Fragment_2();
-                return fragment2;
+                return new Fragment_2();
             case 2:
-                Fragment_3 fragment3 = new Fragment_3();
-                return fragment3;
+                return new Fragment_3();
             case 3:
-                Fragment_parametres fragmentParametres = new Fragment_parametres();
-                return fragmentParametres;
+                return new Fragment_parametres();
             default:
                 Log.v("MyAdapter","@@@@ ERREUR : Méthode Fragment appellée avec position = " + position);
                 return null;

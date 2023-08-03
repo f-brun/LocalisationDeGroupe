@@ -1,5 +1,7 @@
 package org.patarasprod.localisationdegroupe;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -19,13 +21,14 @@ public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     protected Config cfg;
+    org.patarasprod.localisationdegroupe.databinding.ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         cfg = new Config(this);
 
-        org.patarasprod.localisationdegroupe.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         if (Config.DEBUG_LEVEL > 3) Log.v("mainActivity", "SetContentView du Oncreate de l'activité effectué avec succès");
         cfg.fragmentManager = getSupportFragmentManager();
@@ -83,8 +86,6 @@ public class MainActivity extends AppCompatActivity {
  */
     }
 
-
-
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
@@ -107,6 +108,19 @@ public class MainActivity extends AppCompatActivity {
                 cfg.com.demandeAutorisationInternet();
                 cfg.handler = new Handler();
                 cfg.handler.postDelayed(() -> cfg.localisation.getLocalisation(), 3000);
+                return true;
+            case R.id.item_menu_a_propos:
+                AlertDialog.Builder builder = new AlertDialog.Builder(binding.getRoot().getContext());
+                builder.setTitle("A propos...");
+                builder.setMessage(cfg.MESSAGE_INFORMATION);
+                builder.setCancelable(false);
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.show();
                 return true;
             case R.id.item_menu_quitter:
                 // Annule l'exécution différée s'il y en a une

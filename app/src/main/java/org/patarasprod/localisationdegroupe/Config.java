@@ -8,6 +8,7 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.app.ActionBar;
+import android.app.MediaRouteButton;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
@@ -27,8 +28,13 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.patarasprod.localisationdegroupe.views.RecyclerViewAdapterListeUtilisateurs;
 
 public class Config {
+
     public static int DEBUG_LEVEL = 4; // Niveau d'expressivité des messages de debug (0 = aucun message)
 
+    public static final String MESSAGE_INFORMATION = "Application de localisation de groupe\n" +
+            "Version 1.02\n(Août 2023)";
+    public static final String TEXTE_BOUTON_INFO = "Appui court -> centrer la carte sur la personne"+
+            "\nAppui long -> appel programme externe";
 
     protected Context contexte;
     protected AssetManager manager;
@@ -115,7 +121,7 @@ public class Config {
     public TextView texteInfos;    // TextView d'affichage des infos
     public ImageButton indicateurConnexionServeur ;  // Image indiquant qu'une connexion est active
     public FloatingActionButton centrerSurMaPosition;  // Bouton flottant pour centrer sur ma position
-
+    public FloatingActionButton fabInfo;
 
     public String fragmentAffiche; // Fragment actuellement affiché
     private SharedPreferences sharedPreferences;   // Stockage persistant pour les paramètres

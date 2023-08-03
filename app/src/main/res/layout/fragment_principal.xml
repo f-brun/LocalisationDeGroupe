@@ -68,4 +68,17 @@
         app:maxImageSize="40dp"
         app:srcCompat="@drawable/my_location" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
+        android:contentDescription="@string/information"
+        app:layout_constraintBottom_toBottomOf="@+id/viewPager2"
+        app:layout_constraintEnd_toEndOf="@+id/viewPager2"
+        app:maxImageSize="40dp"
+        app:srcCompat="@drawable/icone_info" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -23,6 +23,7 @@
     <string name="item_menu_autorisations">Redemander autorisations</string>
     <string name="item_menu_reinitialiser_positions">Réinitialiser les positions</string>
     <string name="item_menu_parametres">Paramètres</string>
+    <string name="item_menu_a_propos">A propos</string>
     <string name="item_menu_quitter">Quitter</string>
     <string name="label_nom">Nom :</string>
     <string name="label_diffuser_ma_position">Diffuser ma position</string>
@@ -42,4 +43,5 @@
     <string name="label_nom_serveur">Adresse (nom) du serveur :</string>
     <string name="label_port_serveur">Port du serveur :</string>
     <string name="centrer_sur_moi">Centrer sur moi</string>
+    <string name="information">Information</string>
 </resources>

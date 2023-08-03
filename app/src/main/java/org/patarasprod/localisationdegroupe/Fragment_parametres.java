@@ -71,15 +71,16 @@ public class Fragment_parametres extends Fragment {
     public void onFocusChange(View v, boolean hasFocus) {
         if (Config.DEBUG_LEVEL > 3) Log.v("Parametres", "******************perte de focus de " + v.getId());
         try {
-        cfg.nomUtilisateur = String.valueOf(binding.zoneSaisieNom.getText());
-        cfg.intervalleMesureSecondes = Long.parseLong(String.valueOf(binding.champIntervalleMesure.getText()));
-        cfg.intervalleMajSecondes = Long.parseLong(String.valueOf(binding.champIntervalleMaj.getText()));
-        cfg.adresse_serveur = String.valueOf(binding.champAdresseServeur.getText());
-        cfg.port_serveur = Integer.parseInt(String.valueOf(binding.champPortServeur.getText()));
-        if (Config.DEBUG_LEVEL > 3) {
-            String valeurs = "Nom : " + cfg.nomUtilisateur +"\nIntervalle mesure : " +
-                    cfg.intervalleMesureSecondes + "s\nIntervalle maj : " + cfg.intervalleMajSecondes;
-            Log.v("Fragment parametres", valeurs);
+            // trim() permet de supprimer les espaces avant et après
+            cfg.nomUtilisateur = String.valueOf(binding.zoneSaisieNom.getText()).trim();
+            cfg.intervalleMesureSecondes = Long.parseLong(String.valueOf(binding.champIntervalleMesure.getText()));
+            cfg.intervalleMajSecondes = Long.parseLong(String.valueOf(binding.champIntervalleMaj.getText()));
+            cfg.adresse_serveur = String.valueOf(binding.champAdresseServeur.getText()).trim();
+            cfg.port_serveur = Integer.parseInt(String.valueOf(binding.champPortServeur.getText()));
+            if (Config.DEBUG_LEVEL > 3) {
+                String valeurs = "Nom : " + cfg.nomUtilisateur +"\nIntervalle mesure : " +
+                        cfg.intervalleMesureSecondes + "s\nIntervalle maj : " + cfg.intervalleMajSecondes;
+                Log.v("Fragment parametres", valeurs);
         }
 
         } catch (Exception e) {
